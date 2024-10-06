@@ -3,6 +3,7 @@ import getSource from "./extractors/upcloud";
 import Upcloud from "./extractors/upcloud";
 import { Source } from "./utils/types";
 import VidsrcNet from "./extractors/vidsrcNet";
+import Vidlink from "./extractors/vidlink";
 
 const cors = require("cors");
 
@@ -25,12 +26,10 @@ app.use((req, res, next) => {
   next();
 });
 app.get("/", (req, res) => {
-  res.send("Welcome to the Video Server");
+  res.json("Welcome to the Video Server");
 });
 // GET route to fetch items
-app.get("/items", (req: Request, res: Response) => {
-  res.json(items);
-});
+
 app.get("/upcloud/watch", async (req: Request, res: Response) => {
   res.setHeader("Content-Type", "application/json");
   let src: Source;
@@ -90,7 +89,35 @@ app.get("/vidsrc/watch", async (req: Request, res: Response) => {
     res.send(error);
   }
 });
+app.get("/vidlink/watch", async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json");
+  let src: Source;
+  const vidsrc = new Vidlink();
 
+  try {
+    const id = req.query.id;
+    const isMovie = req.query.isMovie == "true";
+    if (!isMovie) {
+      const season = req.query.season;
+      const episode = req.query.episode;
+      console.log(id, isMovie, episode, season);
+      src = await vidsrc.getSource(
+        id?.toString()!,
+        isMovie,
+        season?.toString(),
+        episode?.toString()
+      );
+    } else {
+      src = await vidsrc.getSource(id?.toString()!, isMovie);
+    }
+
+    res.json(src);
+  } catch (error) {
+    console.log("faild ", error);
+
+    res.send(error);
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
