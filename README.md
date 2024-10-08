@@ -1,4 +1,5 @@
 # Streaming Providers
+### This repo is no longer maintained. copy codes from Scrape repo [Here](https://github.com/Toasty360/Junk) if you like!
 
 This project integrates various streaming providers to fetch video sources for movies and TV shows. Below is a list of the providers currently used, along with their statuses.
 
