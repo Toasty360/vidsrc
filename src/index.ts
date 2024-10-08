@@ -4,6 +4,7 @@ import Upcloud from "./extractors/upcloud";
 import { Source } from "./utils/types";
 import VidsrcNet from "./extractors/vidsrcNet";
 import Vidlink from "./extractors/vidlink";
+import { MovieApi } from "./extractors/movieapi";
 
 const cors = require("cors");
 
@@ -109,6 +110,36 @@ app.get("/vidlink/watch", async (req: Request, res: Response) => {
       );
     } else {
       src = await vidsrc.getSource(id?.toString()!, isMovie);
+    }
+
+    res.json(src);
+  } catch (error) {
+    console.log("faild ", error);
+
+    res.send(error);
+  }
+});
+
+app.get("/movieapi/watch", async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json");
+  let src: Source;
+  const movieapi = new MovieApi();
+
+  try {
+    const id = req.query.id;
+    const isMovie = req.query.isMovie == "true";
+    if (!isMovie) {
+      const season = req.query.season;
+      const episode = req.query.episode;
+      console.log(id, isMovie, episode, season);
+      src = await movieapi.getSource(
+        id?.toString()!,
+        isMovie,
+        season?.toString(),
+        episode?.toString()
+      );
+    } else {
+      src = await movieapi.getSource(id?.toString()!, isMovie);
     }
 
     res.json(src);

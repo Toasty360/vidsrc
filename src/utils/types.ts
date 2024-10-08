@@ -3,7 +3,8 @@ export abstract class Provider {
     id: string,
     isMovie: boolean,
     season?: string,
-    episode?: string
+    episode?: string,
+    source?: string
   ): Promise<Source | any>;
 }
 export interface Source {
