@@ -182,6 +182,28 @@ class VidsrcNet extends types_1.Provider {
                 }
                 return result;
             },
+            playerjs: (x) => {
+                try {
+                    var a = x.substr(2);
+                    const b1 = (str) => btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode(parseInt(p1, 16))));
+                    const b2 = (str) => decodeURIComponent(atob(str)
+                        .split("")
+                        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                        .join(""));
+                    a = b2([
+                        "*,4).(_)()",
+                        "33-*.4/9[6",
+                        ":]&*1@@1=&",
+                        "=(=:19705/",
+                        "%?6497.[:4",
+                    ].reduce((acc, k) => acc.replace("/@#@/" + `${b1(k)}`, ""), a));
+                    return a;
+                }
+                catch (error) {
+                    console.error(error);
+                    return "";
+                }
+            },
         };
     }
     getSource(id, isMovie, season, episode) {
@@ -211,6 +233,11 @@ class VidsrcNet extends types_1.Provider {
                 })
                     .then((resp) => resp.text())
                     .then((text) => {
+                    var _a;
+                    var temp = (_a = text.match(/Playerjs\({.*file:"(.*?)",.*?}\)/)) === null || _a === void 0 ? void 0 : _a[1];
+                    if (temp != undefined && temp != "") {
+                        return { id: "playerjs", content: temp };
+                    }
                     const $ = (0, cheerio_1.load)(text);
                     const node = $("#reporting_content").next();
                     return { id: node.attr("id"), content: node.text() };
